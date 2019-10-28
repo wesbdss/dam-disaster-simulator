@@ -32,6 +32,7 @@ url = "https://pt-br.topographic-map.com/maps/g5zv/Brumadinho/"
 def passo1(url= ''):
     if os.path.isfile("./imagens/"+(url.split('/')[5])+".png"):
         img = Image.open("./imagens/"+(url.split('/')[5])+".png")
+        img.show()
     else: 
         img = Image.open("./imagens/"+pickImage.pegarImage(link= url))
 
@@ -39,43 +40,42 @@ def passo1(url= ''):
     # img_sharp = img.filter(ImageFilter.SHARPEN) ##filtro na imagem
     # img_sharp.save('imagens/Brumadinho_sharpened.jpg','JPEG')
     # r,g,b = img_sharp.split() #separar em rgb
-    size = width,height = img.size;
-    #print(size)
 
-    matriz = []
-    mat1 = []
-    coordenada = 10,10
-    try:
-        for x in range(0,width):
-            for y in range(0,height):
-                coordenada = x,y
-                if img.getpixel(coordenada) not in cores:
-                    (r,g,b) = img.getpixel(coordenada)
-                    dist = []
-                    for cor in cores:
-                        for cor in cores: 
-                            dist.append(distanciaRGB((r,g,b),(cor)))
-                    img.putpixel(coordenada, cores[dist.index(min(dist))])
-                    mat1.append(alturas[dist.index(min(dist))])
-            matriz.append(mat1)
-            mat1 = []
-    except IndexError:
-        print("Erro de out of range")
-
-    print(len(matriz),size)
-
-        
-
-    #img.paste("red",(0,0,1,1))
-    img.show()
-    img.save("./imagens/"+(url.split('/')[5])+"_distance.png")
-
-    # print(list(img.getdata()))
+    if os.path.isfile("./imagens/"+(url.split('/')[5])+"_distance.png"):
+        img = Image.open("./imagens/"+(url.split('/')[5])+"_distance.png")
+        img.show()
+    else: 
+        size = width,height = img.size;
+        matriz = []
+        mat1 = []
+        coordenada = 10,10
+        try:
+            for x in range(0,width):
+                for y in range(0,height):
+                    coordenada = x,y
+                    if img.getpixel(coordenada) not in cores:
+                        (r,g,b) = img.getpixel(coordenada)
+                        dist = []
+                        for cor in cores:
+                            for cor in cores: 
+                                dist.append(distanciaRGB((r,g,b),(cor)))
+                        img.putpixel(coordenada, cores[dist.index(min(dist))])
+                        mat1.append(alturas[dist.index(min(dist))])
+                matriz.append(mat1)
+                mat1 = []
+        except IndexError:
+            print("Erro de out of range")
+        print(len(matriz),size)
+        arq = open("./matriz/"+(url.split('/')[5])+".txt","w")
+        arq.write(str(matriz))
+        arq.close()
+        img.show()
+        img.save("./imagens/"+(url.split('/')[5])+"_distance.png")
 
 def distanciaRGB(rgb1,rgb2):
     r1,g1,b1 = rgb1
     r2,g2,b2 = rgb2
-    d1 = math.sqrt(math.pow(r1-r2,2)+math.pow(g1-g2,2)+  math.pow(b1-b2,2))
+    d1 = math.sqrt(math.pow(r1-r2,2)+math.pow(g1-g2,2)+math.pow(b1-b2,2))
     return d1
 
 
